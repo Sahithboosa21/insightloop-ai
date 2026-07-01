@@ -1,4 +1,5 @@
 import Card from "../ui/Card";
+import { features } from "../../constants/features";
 
 function Features() {
   return (
@@ -8,23 +9,14 @@ function Features() {
       </h2>
 
       <div className="grid gap-8 md:grid-cols-3">
-        <Card
-          icon="📊"
-          title="Analyze Data"
-          description="Upload CSV, Excel or connect your SQL databases."
-        />
-
-        <Card
-          icon="🧠"
-          title="AI Investigation"
-          description="The AI investigates before answering your business questions."
-        />
-
-        <Card
-          icon="📄"
-          title="Executive Reports"
-          description="Generate beautiful reports with insights and recommendations."
-        />
+        {features.map((feature) => (
+          <Card
+            key={feature.title}
+            icon={feature.icon}
+            title={feature.title}
+            description={feature.description}
+          />
+        ))}
       </div>
     </section>
   );
