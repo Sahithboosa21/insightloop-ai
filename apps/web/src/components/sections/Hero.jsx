@@ -1,5 +1,6 @@
 import Button from "../ui/Button";
 import Container from "../ui/Container";
+import { Link } from "react-router-dom";
 
 function Hero() {
   return (
@@ -22,7 +23,9 @@ function Hero() {
           </p>
 
           <div className="mt-10 flex gap-4">
-            <Button>Get Started</Button>
+            <Link to="/dashboard">
+  <Button>Get Started</Button>
+</Link>
             <Button variant="secondary">View Demo</Button>
           </div>
         </div>
