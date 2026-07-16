@@ -5,8 +5,24 @@ import Topbar from "../components/layout/Topbar";
 import DashboardCard from "../components/ui/DashboardCard";
 import UploadDataset from "../components/dashboard/UploadDataset";
 import RecentActivity from "../components/dashboard/RecentActivity";
+import { useEffect } from "react";
+import api from "../services/api";
 
 function Dashboard() {
+  useEffect(() => {
+  async function checkBackend() {
+    try {
+      const response = await api.get("/");
+
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  checkBackend();
+}, []);
+
   return (
     <div className="flex min-h-screen bg-slate-950 text-white">
       {/* Sidebar */}

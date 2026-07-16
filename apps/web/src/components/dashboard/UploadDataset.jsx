@@ -14,6 +14,7 @@ import DatasetSummary from "./DatasetSummary";
 import DataPreviewTable from "./DataPreviewTable";
 import ChartsGrid from "./ChartsGrid";
 import AIChat from "./AIChat";
+import api from "../../services/api";
 
 function UploadDataset() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -21,37 +22,50 @@ function UploadDataset() {
   const [isCompleted, setIsCompleted] = useState(false);
   const [csvData, setCsvData] = useState([]);
   const [headers, setHeaders] = useState([]);
+  
+async function handleFileChange(event) {
+  const file = event.target.files[0];
 
-  function handleFileChange(event) {
-    const file = event.target.files[0];
+  if (!file) return;
 
-    if (!file) return;
+  setSelectedFile(file);
+  setIsCompleted(false);
+  setIsInvestigating(false);
+  setCsvData([]);
+  setHeaders([]);
 
-    setSelectedFile(file);
-    setIsCompleted(false);
-    setIsInvestigating(false);
-    setCsvData([]);
-    setHeaders([]);
+  // Local preview using Papa Parse
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: (results) => {
+      const formattedData = results.data.map((row) => ({
+        ...row,
+        Sales: Number(row.Sales),
+        Profit: Number(row.Profit),
+        Customers: Number(row.Customers),
+      }));
 
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      complete: (results) => {
-        const formattedData = results.data.map((row) => ({
-          ...row,
-          Sales: Number(row.Sales),
-          Profit: Number(row.Profit),
-          Customers: Number(row.Customers),
-        }));
+      setCsvData(formattedData);
 
-        setCsvData(formattedData);
+      if (results.meta.fields) {
+        setHeaders(results.meta.fields);
+      }
+    },
+  });
 
-        if (results.meta.fields) {
-          setHeaders(results.meta.fields);
-        }
-      },
-    });
+  // Upload to backend
+  const formData = new FormData();
+  formData.append("dataset", file);
+
+  try {
+    const response = await api.post("/upload", formData);
+
+    console.log("Backend Response:", response.data);
+  } catch (error) {
+    console.error("Upload Failed:", error);
   }
+}
 
   function startInvestigation() {
     setIsInvestigating(true);
